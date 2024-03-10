@@ -4,13 +4,13 @@ const router = express.Router()
 const db = require("../models")
 
 router.get("/", async (req, res) => {
-  const { receiverId } = req.query
+  const { receiverId, senderId } = req.query
 
-  if (!receiverId) {
+  if (!receiverId || !senderId) {
     return res.status(400).json({ message: `receiverId is required` })
   }
 
-  const messages = await db.chatMessage.find({ receiverId })
+  const messages = await db.chatMessage.find({ receiverId, senderId })
   res.status(200).json(messages)
 })
 
