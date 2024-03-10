@@ -14,6 +14,9 @@ const io = new Server(server, { cors: { origin: "*" }, path: "/socket.io" })
 app.use(cors({ origin: "*" }))
 app.use(express.json())
 
+app.use("/users", require("./routes/user.route"))
+app.use("/chatMessages", require("./routes/chat.message.route"))
+
 app.get("/", (_, res) => res.status(200).json({ message: `Hello, World!` }))
 
 io.on("connection", (socket) => {
@@ -24,15 +27,6 @@ io.on("connection", (socket) => {
     someProperty: "some value",
     otherProperty: "other value",
   })
-})
-
-io.emit("connection", {
-  someProperty: "some value",
-  otherProperty: "other value",
-})
-
-io.on("qw", (socket) => {
-  console.log("a qw connected")
 })
 
 server.listen(5000, () => {
