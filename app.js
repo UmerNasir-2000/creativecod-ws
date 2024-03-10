@@ -16,6 +16,7 @@ app.use(express.json())
 
 app.use("/users", require("./routes/user.route"))
 app.use("/chatMessages", require("./routes/chat.message.route"))
+app.use("/groups", require("./routes/group.route"))
 
 app.get("/", (_, res) => res.status(200).json({ message: `Hello, World!` }))
 
@@ -31,7 +32,7 @@ io.on("connection", (socket) => {
 
 server.listen(5000, () => {
   connectToMongo()
-  console.log("server running at http://localhost:3000")
+  console.log("server running at http://localhost:5000")
 })
 
 module.exports = server
