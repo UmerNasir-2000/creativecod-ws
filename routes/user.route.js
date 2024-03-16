@@ -72,4 +72,23 @@ router.get(`/chatUsers/:user`, async (req, res) => {
   }
 })
 
+router.get("/chatMessages", async (req, res) => {
+  const { receiverId, senderId } = req.query
+  console.log(`receiverId = `, receiverId)
+  console.log(`senderId = `, senderId)
+
+  if (!receiverId || !senderId) {
+    return res
+      .status(400)
+      .json({ message: `receiverId and senderId are required` })
+  }
+
+  const chatMessages = await db.chatMessage
+    .find({
+      chatId: { $in: [`${receiverId}${senderId}`, `${senderId}${receiverId}`] },
+    })
+    .sort({ createdAt: 1 })
+  res.status(201).json(chatMessages)
+})
+
 module.exports = router
