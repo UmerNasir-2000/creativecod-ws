@@ -5,6 +5,7 @@ const { createServer } = require("node:http")
 const { Server } = require("socket.io")
 const cors = require("cors")
 
+const db = require("./models")
 const connectToMongo = require("./database")
 
 const app = express()
@@ -21,12 +22,15 @@ app.use("/groups", require("./routes/group.route"))
 app.get("/", (_, res) => res.status(200).json({ message: `Hello, World!` }))
 
 io.on("connection", (socket) => {
-  // console.log(socket.client.conn)
   console.log("a user connected")
 
-  io.emit("connection", {
-    someProperty: "some value",
-    otherProperty: "other value",
+  socket.on(`send-message`, async (data) => {
+    console.log(`send-message`)
+    console.log(data)
+    const chatMessage = await db.chatMessage.create({
+      ...data,
+    })
+    io.emit(`receive-message`, chatMessage)
   })
 })
 
@@ -35,4 +39,4 @@ server.listen(5000, () => {
   console.log("server running at http://localhost:5000")
 })
 
-module.exports = server
+// module.exports = server
