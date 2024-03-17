@@ -9,6 +9,12 @@ const groupSchema = new mongoose.Schema(
       ref: "user",
       required: true,
     },
+    members: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "user",
+      },
+    ],
   },
   { timestamps: true }
 )
