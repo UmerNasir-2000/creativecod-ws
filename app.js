@@ -32,6 +32,34 @@ io.on("connection", (socket) => {
     })
     io.emit(`receive-message`, chatMessage)
   })
+
+  socket.on(`join-room`, (data) => {
+    console.log(`join-room`)
+    console.log(data)
+    socket.join(data.groupId)
+  })
+
+  socket.on("group-message", async (data) => {
+    console.log("group-chat-message")
+    console.log(data)
+
+    const groupMembers = await db.groupMember.find({
+      groupId: data.groupId,
+      userId: { $ne: data.senderId },
+      status: "APPROVED",
+    })
+
+    const receiverIds = groupMembers.map((member) => member.userId)
+
+    const message = await db.groupMessage.create({
+      text: data.text,
+      groupId: data.groupId,
+      receiverIds,
+      senderId: data.senderId,
+    })
+
+    io.to(data.groupId).emit("group-message-receive", message)
+  })
 })
 
 server.listen(5000, () => {
