@@ -1,4 +1,5 @@
 const express = require("express")
+const mongoose = require("mongoose")
 
 const router = express.Router()
 
@@ -23,17 +24,16 @@ router.get("/:userId", async (req, res) => {
     return res.status(400).json({ message: `userId is required` })
   }
 
-  const userGroupIds = await db.groupMember.find(
-    { userId, status: "APPROVED" },
-    "groupId"
-  )
+  const userGroupIds = await db.groupMember.find({ userId, status: "APPROVED" })
 
   const groupIds = userGroupIds.map((group) => group.groupId)
 
   const userGroups = await db.group.find({ _id: { $in: groupIds } }).populate({
     path: "members",
-    select: "_id name email",
+    // select: "_id name email",
   })
+
+  console.log(JSON.stringify(userGroups, null, 2))
 
   res.status(200).json(userGroups)
 })

@@ -60,6 +60,36 @@ io.on("connection", (socket) => {
 
     io.to(data.groupId).emit("group-message-receive", message)
   })
+
+  socket.on("block-user", async (data) => {
+    console.log("block-user")
+    console.log(data)
+
+    const blockedChat = await db.chatRequest.findById(data?.chatId)
+    blockedChat.status = data?.status
+    blockedChat.blockedBy = data?.userId
+
+    await blockedChat.save()
+
+    console.log(blockedChat)
+
+    io.emit("block-user-receive", blockedChat)
+  })
+
+  socket.on("unblock-user", async (data) => {
+    console.log("unblock-user")
+    console.log(data)
+
+    const blockedChat = await db.chatRequest.findById(data?.chatId)
+    blockedChat.status = data?.status
+    blockedChat.blockedBy = null
+
+    await blockedChat.save()
+
+    console.log(blockedChat)
+
+    io.emit("unblock-user-receive", blockedChat)
+  })
 })
 
 server.listen(5000, () => {

@@ -44,9 +44,10 @@ router.get(`/chatUsers/:user`, async (req, res) => {
   }
 
   try {
+    // TODO: Fix this
     const chatUsers = await db.chatRequest
       .find({
-        status: "accepted",
+        // status: "accepted",
         $or: [{ receiverId: user }, { senderId: user }],
       })
       .populate({ path: "senderId", select: "_id name email" })
@@ -89,6 +90,29 @@ router.get("/chatMessages", async (req, res) => {
     })
     .sort({ createdAt: 1 })
   res.status(201).json(chatMessages)
+})
+
+router.patch(`:chatRequestId`, async (req, res) => {
+  const { chatRequestId } = req.params
+  const { status } = req.body
+
+  if (!chatRequestId) {
+    return res.status(400).json({ message: `chatRequestId is required` })
+  }
+
+  if (!status) {
+    return res.status(400).json({ message: `status is required` })
+  }
+
+  const chatRequest = await db.chatRequest.findByIdAndUpdate(
+    chatRequestId,
+    req.body,
+    {
+      new: true,
+    }
+  )
+
+  res.status(201).json(chatRequest)
 })
 
 module.exports = router

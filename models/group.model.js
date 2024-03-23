@@ -12,7 +12,7 @@ const groupSchema = new mongoose.Schema(
     members: [
       {
         type: mongoose.Schema.ObjectId,
-        ref: "user",
+        ref: "groupMember",
       },
     ],
   },

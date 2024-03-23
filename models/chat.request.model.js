@@ -5,7 +5,7 @@ const chatRequestSchema = new mongoose.Schema(
     status: {
       type: String,
       default: "pending",
-      enum: ["pending", "accepted", "rejected"],
+      enum: ["pending", "accepted", "rejected", "blocked"],
     },
     receiverId: {
       type: mongoose.Schema.ObjectId,
@@ -16,6 +16,10 @@ const chatRequestSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: "user",
       required: true,
+    },
+    blockedBy: {
+      type: mongoose.Schema.ObjectId,
+      ref: "user",
     },
   },
   { timestamps: true, versionKey: false }
