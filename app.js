@@ -52,7 +52,7 @@ io.on("connection", (socket) => {
     const receiverIds = groupMembers.map((member) => member.userId)
 
     const message = await db.groupMessage.create({
-      text: data.text,
+      message: data.message,
       groupId: data.groupId,
       receiverIds,
       senderId: data.senderId,
