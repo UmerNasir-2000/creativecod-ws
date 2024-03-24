@@ -114,6 +114,34 @@ io.on("connection", (socket) => {
       groupTitle: updatedGroup.title,
     })
   })
+
+  socket.on(`exit-group`, async (data) => {
+    console.log("data :>> ", data)
+    console.log(`inside exit group`)
+
+    const groupMember = await db.groupMember.findOne({
+      groupId: data?.groupId,
+      userId: data?.userId,
+    })
+
+    console.log("groupMember :>> ", groupMember)
+
+    if (groupMember) {
+      const deletedGroupMember = await db.groupMember.findByIdAndDelete(
+        groupMember._id
+      )
+      const updatedGroup = await db.group.findByIdAndUpdate(
+        data?.groupId,
+        { $pull: { members: groupMember._id } },
+        { new: true }
+      )
+    }
+
+    io.emit(`exit-group-receive`, {
+      groupId: data?.groupId,
+      userId: data?.userId,
+    })
+  })
 })
 
 server.listen(5000, () => {
