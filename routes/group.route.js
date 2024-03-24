@@ -30,7 +30,10 @@ router.get("/:userId", async (req, res) => {
 
   const userGroups = await db.group.find({ _id: { $in: groupIds } }).populate({
     path: "members",
-    // select: "_id name email",
+    populate: {
+      path: "userId",
+      select: "name email",
+    },
   })
 
   console.log(JSON.stringify(userGroups, null, 2))

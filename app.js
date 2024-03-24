@@ -91,6 +91,29 @@ io.on("connection", (socket) => {
 
     io.emit("unblock-user-receive", blockedChat)
   })
+
+  socket.on(`remove-user`, async (data) => {
+    console.log(`remove-user`)
+    console.log(data)
+
+    const groupMember = await db.groupMember.findByIdAndDelete(data.memberId)
+
+    console.log("groupMember :>> ", groupMember)
+
+    const updatedGroup = await db.group.findByIdAndUpdate(
+      data?.groupId,
+      { $pull: { members: data?.memberId } },
+      { new: true }
+    )
+
+    console.log("updatedGroup :>> ", updatedGroup)
+
+    io.emit(`remove-member-receive`, {
+      groupId: data.groupId,
+      userId: data.memberId,
+      groupTitle: updatedGroup.title,
+    })
+  })
 })
 
 server.listen(5000, () => {
